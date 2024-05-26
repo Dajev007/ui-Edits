@@ -108,7 +108,7 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       addButtonDisabled=false;
     });
-    _connect();
+    _isConnected ? null:_connect();
     _bluetoothManager.receivedMessages.add("new");
     _checkConnection();
     dbRef =
@@ -127,15 +127,13 @@ class _HomePageState extends State<HomePage> {
     pointsSubscription = loyaltyPointsRef.onValue.listen((event) {
       DataSnapshot snapshot = event.snapshot;
       if (snapshot.value != null) {
-        setState(() {
+
           if(ref=="bottles"){
             numberOfBottles = (snapshot.value.toString());
           }else if(ref=="Total points"){
             totalPoints = (snapshot.value.toString());
           }
-
           print("newnew points : $totalPoints");
-        });
       } else {
         print("Snapshot is null or empty.");
       }
@@ -465,6 +463,7 @@ class _HomePageState extends State<HomePage> {
                                     padding: EdgeInsets.only(left: 10.w),
                                     child: ElevatedButton(
                                       onPressed: () {
+                                        _disconnect();
                                         Navigator.pushAndRemoveUntil(
                                             context,
                                             MaterialPageRoute(
