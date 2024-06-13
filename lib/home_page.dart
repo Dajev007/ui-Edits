@@ -53,8 +53,11 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late DatabaseReference dbRef;
+  String numberOfPlasticBottles = "0";
   String numberOfBottles = "0";
-   int numberOfBottlesLocal = 0;
+  String numberOfCans = "0";
+  String numberOfMilk = "0";
+  int numberOfBottlesLocal = 0;
   String totalPoints = "0";
   bool clicked=false;
   bool addButtonDisabled=false;
@@ -108,7 +111,7 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       addButtonDisabled=false;
     });
-    _isConnected ? null:_connect();
+    _connect();
     _bluetoothManager.receivedMessages.add("new");
     _checkConnection();
     dbRef =
@@ -258,9 +261,9 @@ class _HomePageState extends State<HomePage> {
                                   Expanded(
                                     flex: 1,
                                     child: Padding(
-                                      padding: EdgeInsets.only(top: 10.w),
+                                      padding: EdgeInsets.only(top: 20.w),
                                       child: Text(
-                                        "Total bottles added now",
+                                        "Plastic bottles added now : $numberOfPlasticBottles",
                                         style: TextStyle(
                                             fontSize: 15.w,
                                             fontWeight: FontWeight.bold),
@@ -268,17 +271,29 @@ class _HomePageState extends State<HomePage> {
                                     ),
                                   ),
                                   Expanded(
-                                    flex: 2,
+                                    flex: 1,
                                     child: Padding(
                                       padding: EdgeInsets.only(top: 10.w),
                                       child: Text(
-                                        numberOfBottles.toString(),
+                                        "Cans added now                 : $numberOfCans",
                                         style: TextStyle(
-                                            fontSize: 35.w,
+                                            fontSize: 15.w,
                                             fontWeight: FontWeight.bold),
                                       ),
                                     ),
-                                  )
+                                  ),
+                                  Expanded(
+                                    flex: 1,
+                                    child: Padding(
+                                      padding: EdgeInsets.only(top:5.w),
+                                      child: Text(
+                                        "Milk carton added now      : $numberOfMilk",
+                                        style: TextStyle(
+                                            fontSize: 15.w,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
@@ -311,7 +326,7 @@ class _HomePageState extends State<HomePage> {
                                                       Radius.zero)),
                                               backgroundColor: Colors.white,
                                               content: Text(
-                                                "press close after insert the bottle inside",
+                                                "Press close after inserting the bottle inside",
                                                 style: TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                   fontSize: 15.w,
@@ -327,16 +342,18 @@ class _HomePageState extends State<HomePage> {
                                                     elevation: 0,
                                                   ),
                                                   onPressed: () async {
+                                                    _isConnected ? null:_connect();
                                                     if(addButtonDisabled==false){
                                                       setState(() {
                                                         addButtonDisabled=true;
                                                       });
                                                       _sendMessage("2");
-                                                      await Future.delayed(Duration(seconds: 5)).then((value) {
+                                                      await Future.delayed(Duration(seconds: 12)).then((value) {
                                                         print("receivedMessages.last = ${_bluetoothManager.receivedMessages.last}");
                                                         if(_bluetoothManager.receivedMessages.last.contains( "3")){
                                                           print("receivedMessages.last inside= ${_bluetoothManager.receivedMessages.last}");
                                                           numberOfBottles=(int.parse(numberOfBottles)+1).toString();
+                                                          numberOfCans=(int.parse(numberOfCans)+1).toString();
                                                           totalPoints =(double.parse(totalPoints)+(0.1)).toString();
 
                                                           Map<String, String>  newPointsUpdate = {
@@ -351,6 +368,7 @@ class _HomePageState extends State<HomePage> {
                                                         }else if(_bluetoothManager.receivedMessages.last.contains( "4")){
                                                         print("receivedMessages.last inside= ${_bluetoothManager.receivedMessages.last}");
                                                         numberOfBottles=(int.parse(numberOfBottles)+1).toString();
+                                                        numberOfMilk=(int.parse(numberOfMilk)+1).toString();
                                                         totalPoints =(double.parse(totalPoints)+(0.2)).toString();
 
                                                         Map<String, String>  newPointsUpdate = {
@@ -365,6 +383,7 @@ class _HomePageState extends State<HomePage> {
                                                         }else if(_bluetoothManager.receivedMessages.last.contains( "5")){
                                                           print("receivedMessages.last inside= ${_bluetoothManager.receivedMessages.last}");
                                                           numberOfBottles=(int.parse(numberOfBottles)+1).toString();
+                                                          numberOfPlasticBottles=(int.parse(numberOfPlasticBottles)+1).toString();
                                                           totalPoints =(double.parse(totalPoints)+(0.3)).toString();
 
                                                           Map<String, String>  newPointsUpdate = {
